@@ -24,7 +24,7 @@ class HTMLTestResultsSerializer(serializers.ModelSerializer):
     class Meta:
         model = HTMLTestResults
         fields = (
-            'id', 'url', 'dns_query', 'tcp_connection', 'request', 'dom_parse', 'blank_screen', 'onload', 'dom_ready',
+            'url_id', 'dns_query', 'tcp_connection', 'request', 'dom_parse', 'blank_screen', 'onload', 'dom_ready',
             'date')
 
 

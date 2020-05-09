@@ -1,10 +1,11 @@
-from .serializers import ServerInfoSerializer, PingResultSerializer, iPerfTestResultsSerializer, ServerInfoThresholdSerializer
+from .serializers import ServerInfoSerializer, PingResultSerializer, iPerfTestResultsSerializer, \
+    ServerInfoThresholdSerializer, HTMLTestResultsSerializer
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from .server_info_test import get_server_info, server_info_to_database
 from .ping_result_test import ping_result_to_database, get_ping_result
-from .html_performance_test import html_performance_test_to_database
+from .html_performance_test import html_performance_test_to_database, get_html_performance_test_result
 from .iperf_test import iperf3_result_to_database, iperf3_test
 from .models import ServerInfoThreshold
 
@@ -32,6 +33,27 @@ class ServerInfoList(APIView):
         if serializer.is_valid():
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class HTMLPerformanceTestResult(APIView):
+    """
+    接收一个URL, 进行前端性能测试, 并将测试结果以JSON形式返回
+
+    示例HTTP Request:
+    POST http://localhost:8000/html-performance-test-result-api
+    Content-Type: application/json
+
+    {
+      "url": "https://apple.com.cn"
+    }
+    """
+    def post(self, request, format=None):
+        url = request.data['url']
+        result = get_html_performance_test_result(url)
+        serializer = HTMLTestResultsSerializer(data=result)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class HTMLTestResults_to_Database(APIView):
@@ -91,7 +113,7 @@ class iPerfResults(APIView):
     """
     接收一个IP地址, 进行iPerf测试, 并将测试结果以JSON形式返回
 
-    :HTTP Request:
+    示例HTTP Request:
     POST http://localhost:8000/iperf3-test-result-api
     Content-Type: application/json
 
@@ -128,7 +150,7 @@ class ServerInfoThresholdUpdate(generics.UpdateAPIView):
     """
     定义PUT操作,更新服务期各项指标阈值
 
-    HTTP Request:
+    示例HTTP Request:
     PUT http://localhost:8000/server-info-threshold-update/1/
     Content-Type: application/json
 

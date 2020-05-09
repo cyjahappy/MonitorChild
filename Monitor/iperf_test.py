@@ -1,5 +1,6 @@
 import iperf3
 from .models import ServerList, iPerfTestResults
+from .threshold_check import iperf_test_check
 
 
 def iperf3_test(server_ip):
@@ -31,6 +32,7 @@ def iperf3_result_to_database():
     i = 0
     while i < total_ip:
         iperf3_result = iperf3_test(ip[i].server_ip)
+        iperf_test_check(iperf3_result)
         iPerfTestResultsInstance = iPerfTestResults()
         iPerfTestResultsInstance.server_ip_id = iperf3_result['server_ip']
         iPerfTestResultsInstance.sent_Mbps = iperf3_result['sent_Mbps']

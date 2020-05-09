@@ -1,5 +1,6 @@
 from selenium import webdriver
 from .models import HTMLTestList, HTMLTestResults
+from .threshold_check import html_performance_check
 
 
 def get_html_performance_test_result(url):
@@ -56,7 +57,9 @@ def html_performance_test_to_database():
     i = 0
     while i < total_url:
         html_performance_test_result = get_html_performance_test_result(url[i].url)
-        # 这一行放入阈值检测函数
+        # 进行阈值检查
+        html_performance_check(html_performance_test_result)
+        # 将结果存入数据库
         HTMLTestResults_instance = HTMLTestResults()
         HTMLTestResults_instance.url_id = html_performance_test_result['url_id']
         HTMLTestResults_instance.dns_query = html_performance_test_result['dns_query']

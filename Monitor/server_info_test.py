@@ -2,6 +2,7 @@
 import psutil
 import time
 from .models import ServerInfo
+from .threshold_check import server_info_check
 
 
 def get_server_info():
@@ -9,7 +10,6 @@ def get_server_info():
     使用psutil库来获取系统的各项指标
     :return: 字典格式存储的server_info
     """
-
     # CPU使用率(%)
     cpu = psutil.cpu_percent(interval=1)
     # 内存总量(转换为GB)
@@ -41,10 +41,15 @@ def get_server_info():
     return server_info
 
 
-# 将服务器各项指标的值传入数据库
 def server_info_to_database():
+    """
+    将服务器各项指标的值传入ServerInfo表
+    :return:
+    """
     server_info = get_server_info()
-    # 这一行加入阈值检测函数
+    # 阈值检测
+    server_info_check(server_info)
+    # 将结果存入数据库中
     ServerInfoInstance = ServerInfo()
     ServerInfoInstance.cpu = server_info['cpu']
     ServerInfoInstance.memory = server_info['memory']
