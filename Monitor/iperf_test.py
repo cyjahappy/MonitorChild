@@ -31,12 +31,12 @@ def iperf3_result_to_database():
     i = 0
     while i < total_ip:
         iperf3_result = iperf3_test(ip[i].server_ip)
-        data = iPerfTestResults()
-        data.server_ip_id = iperf3_result['server_ip']
-        data.sent_Mbps = iperf3_result['sent_Mbps']
-        data.received_Mbps = iperf3_result['received_Mbps']
-        data.tcp_mss_default = iperf3_result['tcp_mss_default']
-        data.retransmits = iperf3_result['retransmits']
-        data.save()
+        iPerfTestResultsInstance = iPerfTestResults()
+        iPerfTestResultsInstance.server_ip_id = iperf3_result['server_ip']
+        iPerfTestResultsInstance.sent_Mbps = iperf3_result['sent_Mbps']
+        iPerfTestResultsInstance.received_Mbps = iperf3_result['received_Mbps']
+        iPerfTestResultsInstance.tcp_mss_default = iperf3_result['tcp_mss_default']
+        iPerfTestResultsInstance.retransmits = iperf3_result['retransmits']
+        iPerfTestResultsInstance.save()
         i = i + 1
     return

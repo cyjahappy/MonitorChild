@@ -52,12 +52,12 @@ def get_server_info():
 
 # 将服务器各项指标的值传入数据库
 def server_info_to_database(server_info):
-    data = ServerInfo()
-    data.cpu = server_info['cpu']
-    data.memory = server_info['memory']
-    data.disk = server_info['disk']
-    data.network = server_info['network']
-    data.network_recv = server_info['network_recv']
-    data.network_sent = server_info['network_sent']
-    data.save()
+    ServerInfoInstance = ServerInfo()
+    ServerInfoInstance.cpu = server_info['cpu']
+    ServerInfoInstance.memory = server_info['memory']
+    ServerInfoInstance.disk = server_info['disk']
+    ServerInfoInstance.network = server_info['network']
+    ServerInfoInstance.network_recv = server_info['network_recv']
+    ServerInfoInstance.network_sent = server_info['network_sent']
+    ServerInfoInstance.save()
     return

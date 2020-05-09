@@ -76,6 +76,7 @@ class ServerInfoThreshold(models.Model):
     memory_threshold = models.FloatField()
     disk_threshold = models.FloatField()
     bandwidth_threshold = models.FloatField()
+    ping_threshold = models.FloatField(default=1)
     HTML_open_time_threshold = models.FloatField()
     backend_management_system_open_time_threshold = models.FloatField()
     microservices_exec_time_threshold = models.FloatField()

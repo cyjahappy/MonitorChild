@@ -2,8 +2,8 @@ from .serializers import ServerInfoSerializer, PingResultSerializer, iPerfTestRe
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .psutil_get_server_info import get_server_info
-from .get_ping_result import ping_result_to_database, get_ping_result
+from .server_info_test import get_server_info
+from .ping_result_test import ping_result_to_database, get_ping_result
 from .html_performance_test import html_performance_test_to_database
 from .iperf_test import iperf3_result_to_database, iperf3_test
 from .models import ServerInfoThreshold

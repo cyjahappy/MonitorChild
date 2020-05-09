@@ -2,13 +2,32 @@ from ping3 import ping
 from .models import ServerList, PingResults
 
 
-# 接受一个IP地址,返回ping的结果(给前端实时更新Line Chart数据使用)
 def get_ping_result(server_ip):
-    ping_result = {
-        'server_ip': server_ip,
-        'ping_result': ping(server_ip)
-    }
-    return ping_result
+    """
+    接收一个IP地址,返回ping的结果
+    :param server_ip:
+    :return ping_result:
+    """
+
+    # 以秒为单位返回ping的结果
+    result = ping(server_ip)
+
+    if not result:
+        # 找不到服务器
+        # 这一行放找不到服务器的报警函数
+        print('host unknown (cannot resolve)')
+        return
+    elif result is None:
+        # 超时
+        # 这一行放ping超时的报警函数
+        print('timed out (no reply)')
+        return
+    else:
+        ping_result = {
+            'server_ip': server_ip,
+            'result': result
+        }
+        return ping_result
 
 
 def ping_result_to_database():
@@ -20,14 +39,16 @@ def ping_result_to_database():
     total_ip = ip.count()
     i = 0
     while i < total_ip:
-        data = PingResults()
-        data.server_ip_id = ip[i].server_ip
-        ping_result = ping(ip[i].server_ip)
+        ping_result = get_ping_result(ip[i].server_ip)
+        # 这一行放检测阈值的函数
         if ping_result:
-            data.ping_result = round(ping_result, 2)
-            data.save()
+            PingResultsInstance = PingResults()
+            PingResultsInstance.server_ip_id = ping_result['server_ip']
+            PingResultsInstance.ping_result = round((ping_result['result']), 2)
+            PingResultsInstance.save()
         i = i + 1
     return
+
 
 
 '''
