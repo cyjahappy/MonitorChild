@@ -17,9 +17,9 @@ def iperf3_test(server_ip):
     else:
         iperf3_result = {
             'server_ip': server_ip,
-            'sent_Mbps': result.sent_Mbps,
-            'received_Mbps': result.received_Mbps,
-            'tcp_mss_default': result.tcp_mss_default,
+            'sent_Mbps': round(result.sent_Mbps, 2),
+            'received_Mbps': round(result.received_Mbps, 2),
+            'tcp_mss_default': round(result.tcp_mss_default, 2),
             'retransmits': result.retransmits,
         }
     return iperf3_result
@@ -40,19 +40,3 @@ def iperf3_result_to_database():
         data.save()
         i = i + 1
     return
-
-
-"""
-        ip = PingList.objects.all()
-        total_ip = ip.count()
-        i = 0
-        while i < total_ip:
-            data = PingResults()
-            data.server_ip_id = ip[i].server_ip
-            ping_result = ping(ip[i].server_ip)
-            if ping_result:
-                data.ping_result = round(ping_result, 2)
-                data.save()
-            i = i + 1
-        return
-"""

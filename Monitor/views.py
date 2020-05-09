@@ -10,7 +10,7 @@ from .iperf_test import iperf3_result_to_database, iperf3_test
 
 class ServerInfo_to_Database(APIView):
     """
-    将服务器各项指标数据存入远端的数据库中
+    将服务器各项指标数据存入ServerInfo表中
     """
 
     def get(self, request):
@@ -35,7 +35,7 @@ class ServerInfoList(APIView):
 
 class HTMLTestResults_to_Database(APIView):
     """
-    对HTMLTestList表中指定的URL进行前端性能测试, 并将测试结果存储在远端数据库中
+    对HTMLTestList表中指定的URL进行前端性能测试, 并将测试结果存储在HTMLTestResults表中
     """
 
     def get(self, request):
@@ -61,17 +61,16 @@ class PingResults_to_Database(APIView):
 
 class PingResult(APIView):
     """
-    接受一个GET请求, 从请求中提取需要ping的ip地址, ping之后将结果返回(还没测试!)
+    接收一个IP地址, ping之后将结果以JSON形式返回(还没测试!)
     """
 
-    def get(self, request, format=None):
-        server_ip = request.GET.get('server_ip')
-        if server_ip:
-            ping_result = get_ping_result(server_ip)
-            serializer = PingResultSerializer(data=ping_result)
-            if serializer.is_valid():
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    def post(self, request, format=None):
+        server_ip = request.data['server_ip']
+        ping_result = get_ping_result(server_ip)
+        serializer = PingResultSerializer(data=ping_result)
+        if serializer.is_valid():
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 class iPerfResults_to_Database(APIView):
@@ -97,6 +96,5 @@ class iPerfResults(APIView):
         result = iperf3_test(server_ip)
         serializer = iPerfTestResultsSerializer(data=result)
         if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
