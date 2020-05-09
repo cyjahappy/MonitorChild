@@ -67,3 +67,18 @@ class HTMLTestResults(models.Model):
     onload = models.FloatField(null=True)
     dom_ready = models.FloatField(null=True)
     date = models.DateTimeField(auto_now=True)
+
+
+# 存储系统各项阈值的数据
+class ServerInfoThreshold(models.Model):
+    id = models.AutoField(primary_key=True)
+    cpu_threshold = models.FloatField()
+    memory_threshold = models.FloatField()
+    disk_threshold = models.FloatField()
+    bandwidth_threshold = models.FloatField()
+    HTML_open_time_threshold = models.FloatField()
+    backend_management_system_open_time_threshold = models.FloatField()
+    microservices_exec_time_threshold = models.FloatField()
+    tcp_sent_Mbps_threshold = models.FloatField()
+    tcp_received_Mbps_threshold = models.FloatField()
+

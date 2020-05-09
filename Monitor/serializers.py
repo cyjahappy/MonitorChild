@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import ServerInfo, PingResults, HTMLTestResults, PingResult, iPerfTestResults
+from .models import ServerInfo, PingResults, HTMLTestResults, PingResult, iPerfTestResults, ServerInfoThreshold
 
 
 class ServerInfoSerializer(serializers.ModelSerializer):
@@ -32,3 +32,12 @@ class iPerfTestResultsSerializer(serializers.ModelSerializer):
     class Meta:
         model = iPerfTestResults
         fields = ('server_ip', 'sent_Mbps', 'received_Mbps', 'retransmits', 'tcp_mss_default')
+
+
+class ServerInfoThresholdSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ServerInfoThreshold
+        fields = (
+            'cpu_threshold', 'memory_threshold', 'disk_threshold', 'bandwidth_threshold', 'HTML_open_time_threshold',
+            'tcp_sent_Mbps_threshold', 'tcp_received_Mbps_threshold', 'microservices_exec_time_threshold',
+            'backend_management_system_open_time_threshold')
