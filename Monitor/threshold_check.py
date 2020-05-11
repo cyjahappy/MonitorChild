@@ -1,4 +1,4 @@
-import requests
+import requests, json
 from .models import ServerInfoThreshold
 
 # 从数据库中获取各项指标阈值存在变量中, 避免每次检测阈值的时候都需要从数据库中取值
@@ -46,8 +46,8 @@ def iperf_alert(iperf3_problematic_server_ip):
     :param iperf3_problematic_server_ip:
     :return:
     """
-    print(iperf3_problematic_server_ip)
-
+    iperf3_problematic_server_ip_dict = {"server_ip": iperf3_problematic_server_ip}
+    requests.post('http://localhost:8000/iperf-test-alert', data=iperf3_problematic_server_ip_dict)
 
 def ping_check(ping_result):
     """
@@ -74,7 +74,8 @@ def html_performance_check(html_performance_test_result):
 
 
 def html_performance_alert(html_performance_problematic_server_ip):
-    print(html_performance_problematic_server_ip)
+    html_performance_problematic_server_ip_dict = {"url": html_performance_problematic_server_ip}
+    requests.post('http://localhost:8000/html-performance-test-alert', data=html_performance_problematic_server_ip_dict)
 
 
 def refresh_threshold():
