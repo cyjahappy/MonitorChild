@@ -1,6 +1,6 @@
 import iperf3
 from .models import ServerList, iPerfTestResults
-from .threshold_check import iperf_test_check
+from .threshold_check import iperf_check, iperf_alert
 
 
 def iperf3_test(server_ip):
@@ -27,12 +27,19 @@ def iperf3_test(server_ip):
 
 
 def iperf3_result_to_database():
+    # 声明一个列表用于存储检测中不达标的ip地址
+    iperf3_problematic_server_ip = []
+
     ip = ServerList.objects.all()
     total_ip = ip.count()
     i = 0
     while i < total_ip:
         iperf3_result = iperf3_test(ip[i].server_ip)
-        iperf_test_check(iperf3_result)
+
+        # 进行阈值检测, 并将检测不达标的IP地址添加进列表尾部
+        if iperf_check(iperf3_result) is True:
+            iperf3_problematic_server_ip.append(iperf3_result['server_ip'])
+
         iPerfTestResultsInstance = iPerfTestResults()
         iPerfTestResultsInstance.server_ip_id = iperf3_result['server_ip']
         iPerfTestResultsInstance.sent_Mbps = iperf3_result['sent_Mbps']
@@ -41,4 +48,7 @@ def iperf3_result_to_database():
         iPerfTestResultsInstance.retransmits = iperf3_result['retransmits']
         iPerfTestResultsInstance.save()
         i = i + 1
+    # 如果problematic_server_ip不为空, 则调用警报函数
+    if len(iperf3_problematic_server_ip) > 0:
+        iperf_alert(iperf3_problematic_server_ip)
     return

@@ -1,6 +1,6 @@
 from selenium import webdriver
 from .models import HTMLTestList, HTMLTestResults
-from .threshold_check import html_performance_check
+from .threshold_check import html_performance_check, html_performance_alert
 
 
 def get_html_performance_test_result(url):
@@ -52,13 +52,19 @@ def html_performance_test_to_database():
     从HTMLTestList中提取所有需要测试性能的URL地址, 都测试一遍一遍之后将结果存储到数据库
     :return:
     """
+
+    # 声明一个列表用于存储检测中不达标的URL地址
+    html_performance_problematic_url = []
     url = HTMLTestList.objects.all()
     total_url = url.count()
     i = 0
     while i < total_url:
         html_performance_test_result = get_html_performance_test_result(url[i].url)
-        # 进行阈值检查
-        html_performance_check(html_performance_test_result)
+
+        # 进行阈值检查, 并将检测不达标的URL地址添加进列表尾部
+        if html_performance_check(html_performance_test_result) is True:
+            html_performance_problematic_url.append(html_performance_test_result['url_id'])
+
         # 将结果存入数据库
         HTMLTestResults_instance = HTMLTestResults()
         HTMLTestResults_instance.url_id = html_performance_test_result['url_id']
@@ -71,4 +77,8 @@ def html_performance_test_to_database():
         HTMLTestResults_instance.onload = html_performance_test_result['onload']
         HTMLTestResults_instance.save()
         i = i + 1
+
+    # 如果html_performance_problematic_url不为空, 则调用警报函数
+    if len(html_performance_problematic_url) > 0:
+        html_performance_alert(html_performance_problematic_url)
     return

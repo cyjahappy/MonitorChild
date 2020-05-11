@@ -39,6 +39,8 @@ class HTMLPerformanceTestResult(APIView):
     """
     接收一个URL, 进行前端性能测试, 并将测试结果以JSON形式返回
 
+    只输入网址不行, 要加上http://或者https://,不然报错
+
     示例HTTP Request:
     POST http://localhost:8000/html-performance-test-result-api
     Content-Type: application/json

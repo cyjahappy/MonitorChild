@@ -40,7 +40,6 @@ def ping_result_to_database():
     i = 0
     while i < total_ip:
         ping_result = get_ping_result(ip[i].server_ip)
-        # 这一行放检测阈值的函数
         if ping_result:
             PingResultsInstance = PingResults()
             PingResultsInstance.server_ip_id = ping_result['server_ip']

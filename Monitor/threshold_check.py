@@ -1,6 +1,7 @@
+import requests
 from .models import ServerInfoThreshold
 
-# 从数据库中获取各项指标阈值
+# 从数据库中获取各项指标阈值存在变量中, 避免每次检测阈值的时候都需要从数据库中取值
 Threshold = ServerInfoThreshold.objects.get(id=1)
 cpu_threshold = Threshold.cpu_threshold
 memory_threshold = Threshold.memory_threshold
@@ -27,34 +28,78 @@ def server_info_check(server_info):
     return
 
 
-def iperf_test_check(iperf3_result):
+def iperf_check(iperf3_result):
     """
-    接收iperf3_result的数据, 逐一检查是否小于阈值, 如果超过就报警(返回速度低于阈值的服务器IP)
+    接收iperf3_result的数据, 逐一检查是否小于阈值, 如果超过就返回True, 否则返回False
     :param iperf3_result:
     """
 
     if (iperf3_result['sent_Mbps'] < tcp_sent_Mbps_threshold) or (
             iperf3_result['received_Mbps'] < tcp_received_Mbps_threshold):
-        print(iperf3_result['server_ip'])
-    return
+        return True
+    return False
+
+
+def iperf_alert(iperf3_problematic_server_ip):
+    """
+    接收检测不达标的IP地址列表, 并将列表内容传输给母服务器
+    :param iperf3_problematic_server_ip:
+    :return:
+    """
+    print(iperf3_problematic_server_ip)
 
 
 def ping_check(ping_result):
     """
-    接收ping_result数据, 检测延迟是否超过阈值, 如果超过就报警(返回速度低于阈值的服务器IP)
+    接收ping_result数据, 检测延迟是否超过阈值, 如果超过就返回True, 否则返回False
     :param ping_result:
     """
 
     if ping_result['result'] > ping_threshold:
         print(ping_result['server_ip'])
-    return
+        return True
+    return False
 
 
 def html_performance_check(html_performance_test_result):
     """
-    接受html_performance_test_result数据, 检测整体页面打开时间是否超过阈值, 如果超过就报警(返回超过阈值的URL)
+    接受html_performance_test_result数据, 检测整体页面打开时间是否超过阈值, 如果超过就返回True, 否则返回False
     :param html_performance_test_result:
     """
 
     if html_performance_test_result['onload'] > HTML_open_time_threshold:
         print(html_performance_test_result['url_id'])
+        return True
+    return False
+
+
+def html_performance_alert(html_performance_problematic_server_ip):
+    print(html_performance_problematic_server_ip)
+
+
+def refresh_threshold():
+    """
+    数据库中的阈值更新后就调用这个函数, 将新的阈值存入变量中
+    """
+    global cpu_threshold
+    global memory_threshold
+    global disk_threshold
+    global bandwidth_threshold
+    global HTML_open_time_threshold
+    global backend_management_system_open_time_threshold
+    global microservices_exec_time_threshold
+    global tcp_sent_Mbps_threshold
+    global tcp_received_Mbps_threshold
+    global ping_threshold
+
+    Threshold = ServerInfoThreshold.objects.get(id=1)
+    cpu_threshold = Threshold.cpu_threshold
+    memory_threshold = Threshold.memory_threshold
+    disk_threshold = Threshold.disk_threshold
+    bandwidth_threshold = Threshold.bandwidth_threshold
+    HTML_open_time_threshold = Threshold.HTML_open_time_threshold
+    backend_management_system_open_time_threshold = Threshold.backend_management_system_open_time_threshold
+    microservices_exec_time_threshold = Threshold.microservices_exec_time_threshold
+    tcp_sent_Mbps_threshold = Threshold.tcp_sent_Mbps_threshold
+    tcp_received_Mbps_threshold = Threshold.tcp_received_Mbps_threshold
+    ping_threshold = Threshold.ping_threshold
