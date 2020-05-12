@@ -6,24 +6,22 @@ from .threshold_check import iperf_check, iperf_alert
 def iperf3_test(server_ip):
     """
     接受一个IP地址, 进行iPerf3测试,将测试结果以字典形式返回
+    服务器上防火墙一定要开启iPerf3服务端的服务, 防火墙一定要开!!!
     :param server_ip:
     :return: iperf3_result
     """
 
     client = iperf3.Client()
     client.server_hostname = server_ip
-    iperf3_error_result = {
-        'server_ip': server_ip,
-        'error': '',
-    }
-    try:
-        result = client.run()
-    except:
-        print('error')
+
+    result = client.run()
 
     # 当无法与服务器通信时, 返回错误信息
     if result.error:
-        iperf3_error_result['error'] = result.error
+        iperf3_error_result = {
+            "server_ip": server_ip,
+            "error": result.error,
+        }
         return iperf3_error_result
 
     # 正常进行测试, 返回测试结果
