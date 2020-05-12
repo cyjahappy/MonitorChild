@@ -22,9 +22,8 @@ def server_info_check(server_info):
     """
 
     if (server_info['cpu'] > cpu_threshold) or (server_info['memory'] > memory_threshold) or (server_info[
-            'disk'] > disk_threshold) or (
-            server_info['bandwidth'] > bandwidth_threshold):
-        print('Server Information !!!!!!!!!!!!!!!!!!!!!!!')
+            'disk'] > disk_threshold) or (server_info['bandwidth'] > bandwidth_threshold):
+        requests.post('http://localhost:8000/server-info-alert', data=server_info)
     return
 
 
@@ -40,14 +39,17 @@ def iperf_check(iperf3_result):
     return False
 
 
-def iperf_alert(iperf3_problematic_server_ip):
+def iperf_alert(iperf3_problematic_server=None):
     """
-    接收检测不达标的IP地址列表, 并将列表内容传输给母服务器
-    :param iperf3_problematic_server_ip:
+    接收检测不达标的服务器信息, 并将列表内容传递给母服务器
+    :param iperf3_problematic_server:
     :return:
     """
-    iperf3_problematic_server_ip_dict = {"server_ip": iperf3_problematic_server_ip}
-    requests.post('http://localhost:8000/iperf-test-alert', data=iperf3_problematic_server_ip_dict)
+    if iperf3_problematic_server is None:
+        print('server_error')
+    else:
+        requests.post('http://localhost:8000/iperf-test-alert', data=iperf3_problematic_server)
+
 
 def ping_check(ping_result):
     """
@@ -74,6 +76,10 @@ def html_performance_check(html_performance_test_result):
 
 
 def html_performance_alert(html_performance_problematic_server_ip):
+    """
+    接收HTML性能检验中不达标的URL列表, 并将URL列表传递到母服务器
+    :param html_performance_problematic_server_ip:
+    """
     html_performance_problematic_server_ip_dict = {"url": html_performance_problematic_server_ip}
     requests.post('http://localhost:8000/html-performance-test-alert', data=html_performance_problematic_server_ip_dict)
 
