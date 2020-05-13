@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .server_info_test import get_server_info, server_info_to_database, get_database_server_info_minutes
 from .ping_result_test import ping_result_to_database, get_ping_result
-from .html_performance_test import html_performance_test_to_database, get_html_performance_test_result
+from .html_performance_test import html_performance_test_to_database, get_html_performance_test_result, get_database_html_performance_test_result_minutes
 from .iperf_test import iperf3_result_to_database, iperf3_test
 from .models import ServerInfoThreshold
 from .threshold_check import refresh_threshold
@@ -200,5 +200,25 @@ class DisplayServerInfo(APIView):
         try:
             database_server_info_minutes = get_database_server_info_minutes()
             return Response(database_server_info_minutes, status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DisplayHTMLPerformanceTestResults(APIView):
+    """
+    接收一个URL, 以一定规则从HTMLTestResults表中提取数据, 并以JSON形式返回
+
+    示例HTTP Request:
+    POST http://localhost:8001/html-performance-test-results-minutes
+    Content-Type: application/json
+
+    {"url": "https://apple.com.cn"}
+    """
+
+    def post(self, request):
+        try:
+            url = request.data['url']
+            database_html_performance_test_result_minutes = get_database_html_performance_test_result_minutes(url)
+            return Response(database_html_performance_test_result_minutes, status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

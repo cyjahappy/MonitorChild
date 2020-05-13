@@ -1,3 +1,5 @@
+import pytz
+from datetime import datetime, timedelta
 from selenium import webdriver
 from .models import HTMLTestList, HTMLTestResults
 from .threshold_check import html_performance_check, html_performance_alert
@@ -91,6 +93,64 @@ def html_performance_test_to_database():
 
     # 如果html_performance_problematic_url不为空, 则调用警报函数
     if len(html_performance_problematic_url) > 0:
-        html_performance_alert_message = dict(zip(html_performance_problematic_url, html_performance_problematic_results))
+        html_performance_alert_message = dict(
+            zip(html_performance_problematic_url, html_performance_problematic_results))
         html_performance_alert(html_performance_alert_message)
     return
+
+
+# 定义在前端图表中一次性展示的数据量
+number_of_data = 10
+time_zone = pytz.timezone('Asia/Shanghai')
+
+
+# 以分钟为单位从数据库中取值
+def get_database_html_performance_test_result_minutes(url):
+    """
+    以分钟为单位从数据库中取值
+    :return: 存储前十分钟系统各项指标的字典
+    """
+
+    # 获取今天的日期
+    now = datetime.now()
+    database_html_performance_test_result_minutes = {
+        'dns_query': [],
+        'tcp_connection': [],
+        'request': [],
+        'dom_parse': [],
+        'blank_screen': [],
+        'dom_ready': [],
+        'onload': [],
+        'date': []
+    }
+    i = number_of_data
+    while i > 0:
+        date_to_get_data = now - timedelta(minutes=i)
+        # 逐个提取年月日
+        date_to_get_data_year = (date_to_get_data.strftime('%Y'))
+        date_to_get_data_month = (date_to_get_data.strftime('%m'))
+        date_to_get_data_day = (date_to_get_data.strftime('%d'))
+        date_to_get_data_hour = (date_to_get_data.strftime('%H'))
+        date_to_get_data_minute = (date_to_get_data.strftime('%M'))
+        # 获取这个时间点的QuerySet
+        HTMLTestResultsData = HTMLTestResults.objects.filter(date__year=date_to_get_data_year,
+                                                             date__month=date_to_get_data_month,
+                                                             date__day=date_to_get_data_day,
+                                                             date__hour=date_to_get_data_hour,
+                                                             date__minute=date_to_get_data_minute,
+                                                             url_id=url)
+
+        # 只有QuerySet不为空,才会进行取值
+        if HTMLTestResultsData.exists():
+            database_html_performance_test_result_minutes['dns_query'].append(HTMLTestResultsData[0].dns_query)
+            database_html_performance_test_result_minutes['tcp_connection'].append(HTMLTestResultsData[0].tcp_connection)
+            database_html_performance_test_result_minutes['request'].append(HTMLTestResultsData[0].request)
+            database_html_performance_test_result_minutes['dom_parse'].append(HTMLTestResultsData[0].dom_parse)
+            database_html_performance_test_result_minutes['blank_screen'].append(HTMLTestResultsData[0].blank_screen)
+            database_html_performance_test_result_minutes['dom_ready'].append(HTMLTestResultsData[0].dom_ready)
+            database_html_performance_test_result_minutes['onload'].append(HTMLTestResultsData[0].onload)
+            # 转换时区
+            database_html_performance_test_result_minutes['date'].append(HTMLTestResultsData[0].date.astimezone(time_zone).strftime('%H:%M'))
+
+        i = i - 1
+    return database_html_performance_test_result_minutes
