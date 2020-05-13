@@ -2,6 +2,7 @@
   <dictionary name="chenyuanjun">
     <words>
       <w>iperf</w>
+      <w>psutil</w>
     </words>
   </dictionary>
 </component>

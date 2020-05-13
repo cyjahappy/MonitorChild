@@ -23,7 +23,7 @@ def server_info_check(server_info):
     """
 
     if (server_info['cpu'] > cpu_threshold) or (server_info['memory'] > memory_threshold) or (server_info[
-            'disk'] > disk_threshold) or (server_info['bandwidth'] > bandwidth_threshold):
+            'disk'] > disk_threshold) or (server_info['network'] > bandwidth_threshold):
         requests.post('http://localhost:8000/server-info-alert', data=server_info)
     return
 
@@ -44,7 +44,6 @@ def iperf_alert(iperf3_alert_message_dict):
     """
     接收检测不达标的服务器信息, 并将列表内容传递给母服务器
     :param iperf3_alert_message_dict:
-    :return:
     """
     requests.post('http://localhost:8000/iperf-test-alert', data=iperf3_alert_message_dict)
 

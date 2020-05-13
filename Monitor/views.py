@@ -3,7 +3,7 @@ from .serializers import ServerInfoSerializer, PingResultSerializer, iPerfTestRe
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from .server_info_test import get_server_info, server_info_to_database
+from .server_info_test import get_server_info, server_info_to_database, get_database_server_info_minutes
 from .ping_result_test import ping_result_to_database, get_ping_result
 from .html_performance_test import html_performance_test_to_database, get_html_performance_test_result
 from .iperf_test import iperf3_result_to_database, iperf3_test
@@ -187,5 +187,18 @@ class CleanDatabase(APIView):
         try:
             clean_database()
             return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+class DisplayServerInfo(APIView):
+    """
+    以一定规则从ServerInfo表中提取数据, 并以JSON形式返回
+    """
+
+    def get(self, request):
+        try:
+            database_server_info_minutes = get_database_server_info_minutes()
+            return Response(database_server_info_minutes, status=status.HTTP_200_OK)
         except:
             return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)
