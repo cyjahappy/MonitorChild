@@ -1,6 +1,7 @@
 import requests, json
 from .models import ServerInfoThreshold
 
+# 部署的时候要改端口!!!!!!!
 # 从数据库中获取各项指标阈值存在变量中, 避免每次检测阈值的时候都需要从数据库中取值
 Threshold = ServerInfoThreshold.objects.get(id=1)
 cpu_threshold = Threshold.cpu_threshold
@@ -67,7 +68,6 @@ def html_performance_check(html_performance_test_result):
     """
 
     if html_performance_test_result['onload'] > HTML_open_time_threshold:
-        print(html_performance_test_result['url_id'])
         return True
     return False
 

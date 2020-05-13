@@ -8,6 +8,8 @@ from .ping_result_test import ping_result_to_database, get_ping_result
 from .html_performance_test import html_performance_test_to_database, get_html_performance_test_result
 from .iperf_test import iperf3_result_to_database, iperf3_test
 from .models import ServerInfoThreshold
+from .threshold_check import refresh_threshold
+from .clean_database import clean_database
 
 
 class ServerInfo_to_Database(APIView):
@@ -49,6 +51,7 @@ class HTMLPerformanceTestResult(APIView):
       "url": "https://apple.com.cn"
     }
     """
+
     def post(self, request, format=None):
         url = request.data['url']
         result = get_html_performance_test_result(url)
@@ -170,3 +173,19 @@ class ServerInfoThresholdUpdate(generics.UpdateAPIView):
     """
     queryset = ServerInfoThreshold.objects.all()
     serializer_class = ServerInfoThresholdSerializer
+
+    # 调用函数使用数据表中的阈值信息刷新缓存的阈值
+    refresh_threshold()
+
+
+class CleanDatabase(APIView):
+    """
+    清理数据库中过期数据
+    """
+
+    def get(self, request):
+        try:
+            clean_database()
+            return Response(status=status.HTTP_200_OK)
+        except:
+            return Response(status=status.HTTP_500_INTERNAL_SERVER_ERROR)

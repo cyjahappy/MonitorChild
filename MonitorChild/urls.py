@@ -13,6 +13,7 @@ urlpatterns = [
     path('iperf3-test-result-api', views.iPerfResults.as_view()),
     path('server-info-threshold-api', views.ServerInfoThresholdList.as_view()),
     url(r'^server-info-threshold-update/(?P<pk>[0-9]+)/$', views.ServerInfoThresholdUpdate.as_view()),
+    path('clean-database-api', views.CleanDatabase.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
