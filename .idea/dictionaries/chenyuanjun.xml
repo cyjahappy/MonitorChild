@@ -1,6 +1,8 @@
 <component name="ProjectDictionaryState">
   <dictionary name="chenyuanjun">
     <words>
+      <w>corsheaders</w>
+      <w>csrftoken</w>
       <w>iperf</w>
       <w>psutil</w>
     </words>

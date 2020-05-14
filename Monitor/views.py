@@ -5,7 +5,8 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from .server_info_test import get_server_info, server_info_to_database, get_database_server_info_minutes
 from .ping_result_test import ping_result_to_database, get_ping_result
-from .html_performance_test import html_performance_test_to_database, get_html_performance_test_result, get_database_html_performance_test_result_minutes
+from .html_performance_test import html_performance_test_to_database, get_html_performance_test_result, \
+    get_database_html_performance_test_result_minutes
 from .iperf_test import iperf3_result_to_database, iperf3_test, get_database_iperf3_test_result_minutes
 from .models import ServerInfoThreshold
 from .threshold_check import refresh_threshold

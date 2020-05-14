@@ -49,7 +49,6 @@ def ping_result_to_database():
     return
 
 
-
 '''
 # 从PingList中提取所有的需要ping的IP, ping一遍之后返回ping的结果的字典(给前端实时用表格展示结果使用的)
 def get_ping_results():
