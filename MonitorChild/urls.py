@@ -17,6 +17,7 @@ urlpatterns = [
     path('server-info-minutes', views.DisplayServerInfo.as_view()),
     path('html-performance-test-results-minutes', views.DisplayHTMLPerformanceTestResults.as_view()),
     path('iperf-test-results-minutes', views.DisplayIPerfTestResults.as_view()),
+    path('target-server-list', views.TargetServerList.as_view()),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

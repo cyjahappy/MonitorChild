@@ -1,5 +1,5 @@
 from .serializers import ServerInfoSerializer, PingResultSerializer, iPerfTestResultsSerializer, \
-    ServerInfoThresholdSerializer, HTMLTestResultsSerializer
+    ServerInfoThresholdSerializer, HTMLTestResultsSerializer, ServerListSerializer
 from rest_framework import status, generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -8,7 +8,7 @@ from .ping_result_test import ping_result_to_database, get_ping_result
 from .html_performance_test import html_performance_test_to_database, get_html_performance_test_result, \
     get_database_html_performance_test_result_minutes
 from .iperf_test import iperf3_result_to_database, iperf3_test, get_database_iperf3_test_result_minutes
-from .models import ServerInfoThreshold
+from .models import ServerInfoThreshold, ServerList
 from .threshold_check import refresh_threshold
 from .clean_database import clean_database
 
@@ -150,6 +150,14 @@ class ServerInfoThresholdList(generics.ListAPIView):
     """
     queryset = ServerInfoThreshold.objects.all()
     serializer_class = ServerInfoThresholdSerializer
+
+
+class TargetServerList(generics.ListAPIView):
+    """
+    定义GET操作,返回JSON格式的服务器各项指标阈值
+    """
+    queryset = ServerList.objects.all()
+    serializer_class = ServerListSerializer
 
 
 class ServerInfoThresholdUpdate(generics.UpdateAPIView):
